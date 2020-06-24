@@ -1,0 +1,38 @@
+import socket
+import threading
+import time
+
+
+
+class receive(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+
+    def run(self):
+        while True:
+            msg, address = socket.recvfrom(2048)
+            print('\n接收来自' + str(address) + '的信息:\n\t' + msg.decode() + '\n：')
+            time.sleep(0.01)
+class send(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+
+    def run(self):
+        while True:
+            date = input('输入：')
+            socket.sendto(date.encode(), addr)
+            time.sleep(0.01)
+
+
+if __name__ == '__main__':
+    addr = ("127.0.0.1", 9090)
+    socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    socket.bind(("127.0.0.1", 8080))
+    thread1 = receive()
+    thread1.setDaemon(True)
+    thread2 = send()
+    thread2.setDaemon(True)
+    thread1.start()
+    thread2.start()
+    thread1.join()
+    thread2.join()
