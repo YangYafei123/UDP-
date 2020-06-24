@@ -1,0 +1,34 @@
+import socket
+import threading
+import time
+
+def send(udp_socket):
+    while True:
+        udp_socket.sendto("sdffg".encode("gbk"), ("127.0.0.1", 8080))
+        time.sleep(0.01)#必须要加
+
+
+def receive(udp_socket):
+    while True:
+        try:
+            recv_data = udp_socket.recvfrom(2048)
+        except Exception as ee:
+            print(ee)
+        else:
+            print("adasd")
+            print("接收到的数据为%s" % (str(recv_data)))
+
+
+
+if __name__ == '__main__':
+    udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    udp_socket.bind(("127.0.0.1", 9090))#192.168.88.50
+    udp_socket.settimeout(0.01)#设置阻塞的超时时间，一旦超时，抛出 timeout 异常
+    t_send = threading.Thread(target=send, args=(udp_socket,))
+    t_send.setDaemon(True)#设置守护线程，不然主线程结束了，子线程还一直运行，程序结束不了
+    t_receive = threading.Thread(target=receive, args=(udp_socket,))
+    t_receive.setDaemon(True)#紧跟线程，能加都加上
+    t_send.start()
+    t_receive.start()
+    t_send.join()
+    t_receive.join()
